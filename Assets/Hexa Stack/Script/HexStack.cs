@@ -9,9 +9,16 @@ public class HexStack : MonoBehaviour
    {
       if (Hexagons == null)
          Hexagons = new List<Hexagon>();
+
       Hexagons.Add(hexagon);
    }
-   public void Plane()
+
+    public Color GetTopHexagonColor()
+    {
+        return Hexagons[^1].Color; // lay phan tu mau cuoi cung  
+    }
+
+    public void Plane()
    {
       foreach (Hexagon hexagon in Hexagons)
       {

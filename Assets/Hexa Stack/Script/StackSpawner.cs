@@ -67,7 +67,7 @@ public class StackSpawner : MonoBehaviour
             Vector3 spawnPosition = hexStack.transform.TransformPoint(hexagonLocalPos);
             
             Hexagon hexagonInstance = Instantiate(hexagonPrefab, spawnPosition, Quaternion.identity, hexStack.transform);
-            hexagonInstance.color = i < firstColorHexagonCount? colorArray[0]:colorArray[1];
+            hexagonInstance.Color = i < firstColorHexagonCount? colorArray[0]:colorArray[1];
             // ==
             // if (i < firstColorHexagonCount)
             // {
