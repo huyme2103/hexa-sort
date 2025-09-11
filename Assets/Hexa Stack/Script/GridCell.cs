@@ -3,6 +3,7 @@ using UnityEngine;
 public class GridCell : MonoBehaviour
 {
     public HexStack Stack { get; private set; }
+ 
     public bool IsOccupied
     {
         get => Stack != null;
