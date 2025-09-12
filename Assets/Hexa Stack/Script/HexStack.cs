@@ -1,16 +1,17 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class HexStack : MonoBehaviour
 {
    public List<Hexagon> Hexagons {get; private set;}
    
-   public void Add(Hexagon hexagon)
+   public void MyAdd(Hexagon hexagon)
    {
       if (Hexagons == null)
          Hexagons = new List<Hexagon>();
 
       Hexagons.Add(hexagon);
+      hexagon.SetParent(transform);
    }
 
     public Color GetTopHexagonColor()
@@ -25,4 +26,15 @@ public class HexStack : MonoBehaviour
          hexagon.DisableCollider();
       }
    }
+
+    public bool MyContains(Hexagon hexagon) => Hexagons.Contains(hexagon); // kiểm tra hexagon của phuong thuc, neu co trong list tra ve true
+
+    public void MyRemove(Hexagon hexagon)
+    {
+        Hexagons.Remove(hexagon); // Remove trong list
+
+        if (Hexagons.Count <= 0)
+            //DestroyImmediate(gameObject);
+            Destroy(gameObject);
+    }
 }

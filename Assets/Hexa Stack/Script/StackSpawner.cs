@@ -80,7 +80,7 @@ public class StackSpawner : MonoBehaviour
 
             hexagonInstance.Configure(hexStack);
 
-            hexStack.Add(hexagonInstance);
+            hexStack.MyAdd(hexagonInstance);
 
         }
     }

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MergeManager : MonoBehaviour
@@ -41,7 +42,7 @@ public class MergeManager : MonoBehaviour
         }
         Color gridCellTopHexagonColor = gridCell.Stack.GetTopHexagonColor(); //lay danh sach Hexagon tu HexStack ở GridCell.cs observer
 
-
+        //tim cung mau
         List<GridCell> similarNeighborGridCells = new List<GridCell>();
 
         foreach (GridCell neighborGridCell in neighborGridCells)
@@ -52,13 +53,13 @@ public class MergeManager : MonoBehaviour
                 similarNeighborGridCells.Add(neighborGridCell);
         }
 
-
         if (similarNeighborGridCells.Count <= 0)
         {
             Debug.Log("khong co similar neighbors o gan cell nay");
             return;
         }
 
+        //Gom hexagon từ neighbor cùng màu
         List<Hexagon> hexagonsToAdd = new List<Hexagon>();
 
         foreach (GridCell neighborCell in similarNeighborGridCells)
@@ -72,11 +73,35 @@ public class MergeManager : MonoBehaviour
                     break;
 
                 hexagonsToAdd.Add(hexagon);
-                hexagon.SetParent(null);
+                hexagon.SetParent(null);// tách hexagon ra khỏi stack gốc
             }
         }
-        Debug.Log($"we need to add {hexagonsToAdd.Count}");
+        //Debug.Log($"we need to add {hexagonsToAdd.Count}");
+
+        foreach(GridCell neighborCell in similarNeighborGridCells)
+        {
+            HexStack stack = neighborCell.Stack;
+            foreach(Hexagon hexagon in hexagonsToAdd)
+            {
+                if (stack.MyContains(hexagon)) // if true
+                    stack.MyRemove(hexagon);
+            }
+
+        }
+
+        float initialY = gridCell.Stack.Hexagons.Count * 0.2f;
+
+        for (int i = 0; i < hexagonsToAdd.Count; i++)
+        {
+            Hexagon hexagon = hexagonsToAdd[i];
+
+            float targetY = initialY + i * 0.2f;
+            Vector3 targetlocalPosition = Vector3.up * targetY;
+
+            gridCell.Stack.MyAdd(hexagon);
+            hexagon.transform.localPosition = targetlocalPosition;
+        }
     }
 
-    
+   
 }
