@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
+﻿
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MergeManager : MonoBehaviour
@@ -17,24 +17,35 @@ public class MergeManager : MonoBehaviour
     }
     private void StackPlacedCallback(GridCell gridCell) // truyen targetCell từ onStackPlaced?.Invoke(targetCell); 
     {
+        StartCoroutine(StackPlacedCoroutine(gridCell));
+        
+    }
+
+    IEnumerator StackPlacedCoroutine(GridCell gridCell)
+    {
+        yield return CheckForMerge(gridCell);
+    }
+
+    IEnumerator CheckForMerge(GridCell gridCell)
+    {
         //Tìm neighbors 
         List<GridCell> neighborGridCells = GetNeighborGridCells(gridCell); // phuong thuc duoc trien khai ben duoi
-       
-        if(neighborGridCells.Count <= 0)
+
+        if (neighborGridCells.Count <= 0)
         {
             Debug.Log("khong co neighbors o gan cell nay");
-            return;
+            yield break;
         }
 
         Color gridCellTopHexagonColor = gridCell.Stack.GetTopHexagonColor(); //lay danh sach Hexagon tu HexStack ở GridCell.cs observer
         //tim cung mau
-        List<GridCell> similarNeighborGridCells = GetSimilarNeighborGridCells(gridCellTopHexagonColor,neighborGridCells.ToArray());
-        
+        List<GridCell> similarNeighborGridCells = GetSimilarNeighborGridCells(gridCellTopHexagonColor, neighborGridCells.ToArray());
+
 
         if (similarNeighborGridCells.Count <= 0)
         {
             Debug.Log("khong co similar neighbors o gan cell nay");
-            return;
+            yield break;
         }
 
         //Gom hexagon từ neighbor cùng màu
@@ -45,10 +56,12 @@ public class MergeManager : MonoBehaviour
         RemoveHexagonsFromStack(hexagonsToAdd, similarNeighborGridCells.ToArray());
 
         // Move hexagon
-        MoveHexagons(gridCell, hexagonsToAdd );
+        MoveHexagons(gridCell, hexagonsToAdd);
+
+        yield return new WaitForSeconds(0.09f +  (hexagonsToAdd.Count +1) * 0.1f);
 
         //
-        CheckForCompleteStack(gridCell, gridCellTopHexagonColor);
+        yield return CheckForCompleteStack(gridCell, gridCellTopHexagonColor);
     }
 
     private List<GridCell> GetNeighborGridCells(GridCell gridCell)
@@ -138,14 +151,14 @@ public class MergeManager : MonoBehaviour
             Vector3 targetlocalPosition = Vector3.up * targetY;
 
             gridCell.Stack.AddHexagon(hexagon);
-            hexagon.transform.localPosition = targetlocalPosition;
+            hexagon.MoveToLocal(targetlocalPosition);
         }
     }
 
-    private void CheckForCompleteStack(GridCell gridCell, Color topColor)
+    private IEnumerator CheckForCompleteStack(GridCell gridCell, Color topColor)
     {
         if (gridCell.Stack.Hexagons.Count < 10)
-            return;
+            yield break;
 
         List<Hexagon> similarHexagons = new List<Hexagon>();
 
@@ -158,16 +171,23 @@ public class MergeManager : MonoBehaviour
             similarHexagons.Add(hexagon);
         }
 
-
+        int similarHexagonCount = similarHexagons.Count;
         // at this point, have a list of similar hexagons
         if (similarHexagons.Count < 10)
-            return;
+            yield break;
+
+        float delay = 0;
         while(similarHexagons.Count > 0)
         {
             similarHexagons[0].SetParent(null);
-            DestroyImmediate(similarHexagons[0].gameObject);
-            gridCell.Stack.RemoveHexagon(similarHexagons[0]);
-            similarHexagons.RemoveAt(0);
+            similarHexagons[0].Vanish(delay);
+            //DestroyImmediate(similarHexagons[0].gameObject);
+
+            delay += 0.1f;
+
+            gridCell.Stack.RemoveHexagon(similarHexagons[0]);//xoá khỏi stack thật.
+            similarHexagons.RemoveAt(0);//xoá khỏi list tạm để không xử lý lại.
         }
+        yield return new WaitForSeconds(0.2f + (similarHexagonCount + 1) * 0.1f);
     } 
 }
