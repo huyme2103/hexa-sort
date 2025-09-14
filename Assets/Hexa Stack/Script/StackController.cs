@@ -70,8 +70,8 @@ public class StackController : MonoBehaviour
 
         currentStack.transform.position = targetCell.transform.position.With(y: .2f);
         currentStack.transform.SetParent(targetCell.transform);
-        currentStack.Plane();
-        
+        currentStack.DisableAllColliders();//currentStack.Plane();
+
         targetCell.AssignStack(currentStack);
         
         onStackPlaced?.Invoke(targetCell);
