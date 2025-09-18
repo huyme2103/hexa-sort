@@ -4,8 +4,16 @@ using UnityEngine;
 public class HexStack : MonoBehaviour
 {
    public List<Hexagon> Hexagons {get; private set;}
-   
-   public void AddHexagon(Hexagon hexagon)
+
+    public void Initialize()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            AddHexagon(transform.GetChild(i).GetComponent<Hexagon>());
+        }
+        DisableAllColliders();
+    }
+    public void AddHexagon(Hexagon hexagon)
    {
       if (Hexagons == null)
          Hexagons = new List<Hexagon>();
@@ -22,9 +30,8 @@ public class HexStack : MonoBehaviour
     public void DisableAllColliders()
    {
       foreach (Hexagon hexagon in Hexagons)
-      {
          hexagon.DisableCollider();
-      }
+      
    }
 
     public bool ContainsHexagon(Hexagon hexagon) => Hexagons.Contains(hexagon); // kiểm tra hexagon của phuong thuc, neu co trong list tra ve true

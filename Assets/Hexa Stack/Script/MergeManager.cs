@@ -44,7 +44,7 @@ public class MergeManager : MonoBehaviour
 
         if (neighborGridCells.Count <= 0)
         {
-            //Debug.Log("khong co neighbors o gan cell nay");
+            Debug.Log("khong co neighbors o gan cell nay");
             yield break;
         }
 
@@ -55,7 +55,7 @@ public class MergeManager : MonoBehaviour
 
         if (similarNeighborGridCells.Count <= 0)
         {
-            //Debug.Log("khong co similar neighbors o gan cell nay");
+            Debug.Log("khong co similar neighbors o gan cell nay");
             yield break;
         }
 
